@@ -8,7 +8,7 @@ from toQASM import*
 
 def read_inputs():
     list = []
-    f = open('inputs.txt', 'r')
+    f = open(sys.argv[1], 'r')
     for line in f:
         ip = []
         line = line.strip()
