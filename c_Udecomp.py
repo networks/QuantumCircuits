@@ -10,7 +10,7 @@ tolerance = 10**(-5)
 class matrix:
 	def __init__(self,qbits,elements,cbits):
 		self.qbits = qbits
-		self.elements = elements
+		self.elements = np.asarray(elements)
 		self.cbits = cbits
 	def qsize(self):
 		return len(self.qbits)
@@ -51,7 +51,12 @@ def c_Udecomp(Umatrix):
 		gamma = 2*m.atan(U0_2pol[0])
 		beta = U0_2pol[1]
 		U1_3 = Umatrix[1]/Umatrix[3]
-		if ((((-m.cos(beta)*U0_2pol[0]) - U1_3.real) > tolerance) or (((m.sin(beta)*U0_2pol[1]) - U1_3.imag) > tolerance)):
+		#print "tol1 ",((m.sin(beta)*U0_2pol[1]) - U1_3.imag)
+		#print U0_2pol[1]
+		#print U1_3.imag
+		if ((((-m.cos(beta)*U0_2pol[0]) - U1_3.real) > tolerance) or (((m.sin(beta)*U0_2pol[0]) - U1_3.imag) > tolerance)):
+			#print Umatrix
+			#print matrixmult(Umatrix.reshape(2,2),Umatrix.reshape(2,2))
 			do_error("Error1: Detected unitary error")
 		U_0 = cmath.polar(Umatrix[0]/m.cos(gamma/2.0))
 		if (U_0[0] - 1.0 > tolerance):

@@ -3,7 +3,7 @@
 
 from c_Udecomp import*
 import scipy.linalg as ln
-from toQASM import*
+from toqasm import*
 from read_inputs import*
 import numpy as np
 
@@ -11,6 +11,7 @@ def QCircDecomp(gates,interim):
 
 	Decomp = []
 	X = [0.0+0.0j,1.0+0.0j,1.0+0.0j,0.0+0.0j]
+	X = np.asarray(X)
 	
 	while(len(gates) != 0):
 		if (gates[-1].qsize() == 1):
@@ -18,7 +19,8 @@ def QCircDecomp(gates,interim):
 				Decomp.append(gates[-1])
 				gates.pop()
 			elif (gates[-1].csize() == 1):
-				if (gates[-1].elements == X):
+				#print gates[-1].elements
+				if ((gates[-1].elements == X).all()):
 					Decomp.append(gates[-1])
 					gates.pop()
 				else:
@@ -32,12 +34,17 @@ def QCircDecomp(gates,interim):
 					gates.pop()
 			else:
 				V = sqrt(gates[-1].elements)
-				Vdager = matrix(gates[-1].qbits,numpy.asarray(V.getH()),gates[-1].cbits[-1])
-				V1 = matrix(gates[-1].qbits,np.asarray(V),gates[-1].cbits[-1])
-				X1 = matrix(gates[-1].cbits[-1],X,gates[-1].cbits[:-1])
-				V2 = matrix(gates[-1].qbits,np.asarray(V),gates[-1].cbits[:-1])
+				Vdager = matrix(gates[-1].qbits,np.asarray(np.asmatrix(V).getH()).reshape(-1),[gates[-1].cbits[-1]])
+				V1 = matrix(gates[-1].qbits,np.asarray(V).reshape(-1),[gates[-1].cbits[-1]])
+				X1 = matrix([gates[-1].cbits[-1]],X,gates[-1].cbits[:-1])
+				V2 = matrix(gates[-1].qbits,np.asarray(V).reshape(-1),gates[-1].cbits[:-1])
 				gates[-1] = V1
+				#print "V1 ",V1.elements
+				#print "X1 ",X1.elements
+				#print "V2 ",V2.elements
+				#print "Vdager ",Vdager.elements
 				gates = gates + [X1,Vdager,X1,V2]
+				#print gates
 		else:
 				do_error("Error: Unidentified gate")
 		if (interim == 1):
@@ -62,6 +69,6 @@ if __name__ == '__main__':
 	j = 0
 	gates = read_inputs()
 	print gates
-	for i in range(2):
+	for i in range(3):
 		print '\tqubit    q' + str(i)
 	QCircDecomp(gates,0)
