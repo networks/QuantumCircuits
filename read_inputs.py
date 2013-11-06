@@ -4,7 +4,7 @@ Created on 25-Oct-2013
 @author: sireesh
 '''
 import sys
-from toQASM import*
+from toqasm import*
 
 def read_inputs():
     list = []
